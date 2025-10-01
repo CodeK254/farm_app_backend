@@ -28,7 +28,7 @@ func main() {
 
 	initStorage(db)
 
-	server := api.NewAPIServer(":8080", db)
+	server := api.NewAPIServer(fmt.Sprintf(":%s", config.Envs.Port), db)
 
 	if err := server.Run(); err != nil {
 		log.Fatal("error configuring server ", err)
