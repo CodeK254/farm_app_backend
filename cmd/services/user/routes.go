@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/CodeK254/farm_app_backend/cmd/services/auth"
@@ -25,7 +26,35 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
+	/// Get JSON Payload
+	var payload types.LoginPayload
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
 
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload %v", errors))
+		return
+	}
+
+	/// Check if user already exists
+	user, err := h.store.GetUserByEmail(payload.Email)
+
+	log.Printf(user.Email)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	if !auth.ComparePasswords(user.Password, []byte(payload.Password)){
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid username or password"))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": "token"})
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {

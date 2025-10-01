@@ -3,6 +3,7 @@ package user
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/CodeK254/farm_app_backend/types"
 )
@@ -16,6 +17,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetUserByEmail(email string) (*types.User, error) {
+	log.Printf("Serching via %s", email)
 	rows, err := s.db.Query("SELECT * FROM users WHERE email = ?", email)
 
 	if err != nil {
@@ -35,6 +37,7 @@ func (s *Store) GetUserByEmail(email string) (*types.User, error) {
 		return nil, fmt.Errorf("no user found for this email")
 	}
 
+	log.Printf("User is: %v", u)
 	return u, nil
 }
 
