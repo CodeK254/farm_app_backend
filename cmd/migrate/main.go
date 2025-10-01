@@ -44,7 +44,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cmd := os.Args[1]
+	cmd := os.Args[(len(os.Args) - 1)]
 
 	if cmd == "up" {
 		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
@@ -62,7 +62,7 @@ func main() {
 		if len(os.Args) < 3 {
 			log.Fatal("force command requires a version number")
 		}
-		version := os.Args[2]
+		version := os.Args[len(os.Args)-2]
 
 		// Parse version string to int
 		var versionInt int

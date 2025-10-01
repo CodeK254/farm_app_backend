@@ -17,4 +17,4 @@ migrate-down:
 	@go run cmd/migrate/main.go down
 
 migrate-force:
-	@go run cmd/migrate/main.go force $(filter-out $@,$(MAKECMDGOALS))
+	@go run cmd/migrate/main.go $(filter-out $@,$(MAKECMDGOALS)) force
