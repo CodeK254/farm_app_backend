@@ -73,6 +73,5 @@ func main() {
 		if err := m.Force(versionInt); err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("Forced database to version %d", versionInt)
 	}
 }

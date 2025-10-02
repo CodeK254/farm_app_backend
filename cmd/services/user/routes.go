@@ -2,10 +2,10 @@ package user
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/CodeK254/farm_app_backend/cmd/services/auth"
+	"github.com/CodeK254/farm_app_backend/config"
 	"github.com/CodeK254/farm_app_backend/types"
 	"github.com/CodeK254/farm_app_backend/utils"
 	"github.com/go-playground/validator/v10"
@@ -42,8 +42,6 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 	/// Check if user already exists
 	user, err := h.store.GetUserByEmail(payload.Email)
 
-	log.Printf(user.Email)
-
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("invalid email or password"))
 		return
@@ -54,7 +52,14 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": "token"})
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, user.ID)
+	if err != nil{
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {

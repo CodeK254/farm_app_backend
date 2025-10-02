@@ -18,3 +18,6 @@ migrate-down:
 
 migrate-force:
 	@go run cmd/migrate/main.go $(filter-out $@,$(MAKECMDGOALS)) force
+
+tidy:
+	@go mod tidy
